@@ -25,7 +25,8 @@ def drawImage(image_num):
     # Update the display
     pygame.display.flip()
 
-image_num = 0
+mood = "normal"
+
 
 # Game loop
 running = True
@@ -33,9 +34,15 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    drawImage(image_num)
-    image_num += 1 
-    pygame.time.wait(3000)
+
+    if mood == "normal":
+        drawImage(0)
+        mood = "blinking"
+        pygame.time.wait(1000)
+    elif mood == "blinking":
+        drawImage(1)
+        mood = "normal"
+        pygame.time.wait(300)
 
 # Quit Pygame
 pygame.quit()
