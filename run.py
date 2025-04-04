@@ -11,9 +11,23 @@ images = []
 images.append(pygame.image.load("kerfur-face1.webp"))
 images.append(pygame.image.load("kerfur-face2.webp"))
 images.append(pygame.image.load("kerfur-face3.webp"))
-images.append(pygame.image.load("kerfur-face4.webp"))
-images.append(pygame.image.load("kerfur-face5.webp"))
-images.append(pygame.image.load("kerfur-face6.webp"))
+images.append(pygame.image.load("kerfur-face3b.webp"))
+images.append(pygame.image.load("kerfur-face3c.webp"))
+images.append(pygame.image.load("kerfur-wink-left.webp"))
+images.append(pygame.image.load("kerfur-wink-right.webp"))
+
+sounds = []
+sounds.append(pygame.mixer.Sound('kerfur2meow-01.ogg'))
+sounds.append(pygame.mixer.Sound('kerfur2meow-02.ogg'))
+sounds.append(pygame.mixer.Sound('kerfur2meow-03.ogg'))
+sounds.append(pygame.mixer.Sound('VotV-audio-effects-roomwell_on.ogg'))
+sounds.append(pygame.mixer.Sound('kerfurEXE.ogg'))
+
+def playSound():
+    channel = sounds[random.randint(0,3)].play()
+    while channel.get_busy():
+        pygame.time.delay(100)
+
 
 def drawImage(image_num):
     # Get the image's rectangle
@@ -30,9 +44,13 @@ mood = "normal"
 # Game loop
 running = True
 while running:
+   
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+               mood = "happy"
 
     if mood == "normal":
         drawImage(0)
@@ -50,8 +68,8 @@ while running:
         pygame.time.wait(300)
     elif mood == "happy":
         drawImage(2)
+        playSound()
         mood = "normal"
-        pygame.time.wait(300)
 
 # Quit Pygame
 pygame.quit()
