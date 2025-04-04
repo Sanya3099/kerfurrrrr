@@ -23,10 +23,14 @@ sounds.append(pygame.mixer.Sound('kerfur2meow-03.ogg'))
 sounds.append(pygame.mixer.Sound('VotV-audio-effects-roomwell_on.ogg'))
 sounds.append(pygame.mixer.Sound('kerfurEXE.ogg'))
 
-def playSound():
-    channel = sounds[random.randint(0,3)].play()
+def playSound(sounds_num):
+    channel = sounds[sounds_num].play()
     while channel.get_busy():
         pygame.time.delay(100)
+
+def playMeowSound():
+    playSound(random.randint(0,2))
+
 
 
 def drawImage(image_num):
@@ -43,7 +47,9 @@ def drawImage(image_num):
 mood = "normal"
 # Game loop
 running = True
+pet = 0
 while running:
+    print("mood:", mood, "pet:", pet)
    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -51,6 +57,7 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                mood = "happy"
+               pet += 1
 
     if mood == "normal":
         drawImage(0)
@@ -59,7 +66,6 @@ while running:
             mood = "happy"
         else:
             mood = "blinking"
-
         random_number = random.randint(100,900)
         pygame.time.wait(random_number)
     elif mood == "blinking":
@@ -68,7 +74,17 @@ while running:
         pygame.time.wait(300)
     elif mood == "happy":
         drawImage(2)
-        playSound()
+        playMeowSound()
+        mood = "normal"
+        if pet > 5:
+            mood = "wink"
+    elif mood =="wink":
+        drawImage(5)
+        pygame.time.wait(1000)
+        drawImage(6)
+        pygame.time.wait(300)
+        playSound(3)
+        pet = 0
         mood = "normal"
 
 # Quit Pygame
