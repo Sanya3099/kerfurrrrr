@@ -1,4 +1,5 @@
 import pygame
+import random
 pygame.init()
 
 screen_width = 800
@@ -26,8 +27,6 @@ def drawImage(image_num):
     pygame.display.flip()
 
 mood = "normal"
-
-
 # Game loop
 running = True
 while running:
@@ -37,10 +36,20 @@ while running:
 
     if mood == "normal":
         drawImage(0)
-        mood = "blinking"
-        pygame.time.wait(1000)
+        random_number = random.randint(0,8)
+        if random_number == 0:
+            mood = "happy"
+        else:
+            mood = "blinking"
+
+        random_number = random.randint(100,900)
+        pygame.time.wait(random_number)
     elif mood == "blinking":
         drawImage(1)
+        mood = "normal"
+        pygame.time.wait(300)
+    elif mood == "happy":
+        drawImage(2)
         mood = "normal"
         pygame.time.wait(300)
 
