@@ -1,5 +1,6 @@
 import pygame
 import random
+import datetime
 pygame.init()
 
 screen_width = 800
@@ -13,9 +14,10 @@ images.append(pygame.image.load("kerfur-face2.webp"))
 images.append(pygame.image.load("kerfur-face3.webp"))
 images.append(pygame.image.load("kerfur-face3b.webp"))
 images.append(pygame.image.load("kerfur-face3c.webp"))
-images.append(pygame.image.load("kerfur-wink-left.webp"))
-images.append(pygame.image.load("kerfur-wink-right.webp"))
-
+images.append(pygame.image.load("kerfur-sleep_a.webp"))
+images.append(pygame.image.load("kerfur-sleep_b.webp"))
+images.append(pygame.image.load("kerfur-wink-left_b.webp"))
+images.append(pygame.image.load("kerfur-wink-right-b.webp"))
 sounds = []
 sounds.append(pygame.mixer.Sound('kerfur2meow-01.ogg'))
 sounds.append(pygame.mixer.Sound('kerfur2meow-02.ogg'))
@@ -34,6 +36,7 @@ def playMeowSound():
 
 
 def drawImage(image_num):
+    print("current image number", image_num)
     # Get the image's rectangle
     image_rect = images[image_num].get_rect()
     image_rect.center = (screen_width // 2, screen_height // 2)
@@ -45,9 +48,10 @@ def drawImage(image_num):
     pygame.display.flip()
 
 mood = "normal"
-# Game loop
 running = True
 pet = 0
+last_pet_time = datetime.datetime.now()
+
 while running:
     print("mood:", mood, "pet:", pet)
    
@@ -58,6 +62,8 @@ while running:
             if event.button == 1:
                mood = "happy"
                pet += 1
+               last_pet_time = datetime.datetime.now()
+    time_since_last_pet = (datetime.datetime.now() - last_pet_time).total_seconds()
 
     if mood == "normal":
         drawImage(0)
@@ -68,6 +74,9 @@ while running:
             mood = "blinking"
         random_number = random.randint(100,900)
         pygame.time.wait(random_number)
+        if time_since_last_pet > 5:
+            mood = "sleepy"
+            pet = 0
     elif mood == "blinking":
         drawImage(1)
         mood = "normal"
@@ -78,14 +87,29 @@ while running:
         mood = "normal"
         if pet > 5:
             mood = "wink"
-    elif mood =="wink":
-        drawImage(5)
-        pygame.time.wait(1000)
-        drawImage(6)
-        pygame.time.wait(300)
+    elif mood == "wink":
         playSound(3)
+        drawImage(7)
+        pygame.time.wait(1000)
+        drawImage(8)
+        pygame.time.wait(300)
         pet = 0
         mood = "normal"
+    elif mood == "sleepy":
+        drawImage(1)
+        pygame.time.wait(1000)
+        drawImage(5)
+        pygame.time.wait(1000)
+        mood = "sleeping"
+    elif mood == "sleeping":
+        drawImage(6)
+        pygame.time.wait(300)
+        if pet >= 1:
+            mood = "normal"
+    else:
+        raise Exception("Mood not recognized: " + mood)
+        
+    
 
 # Quit Pygame
 pygame.quit()
