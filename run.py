@@ -3,6 +3,8 @@ import random
 import datetime
 pygame.init()
 
+font = pygame.font.Font(pygame.font.get_default_font(), 36)
+
 screen_width = 800
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
@@ -33,19 +35,28 @@ def playSound(sounds_num):
 def playMeowSound():
     playSound(random.randint(0,2))
 
+def clearScreen():
+    # Clear the screen
+    screen.fill((0, 0, 0))  # black background
 
-
-def drawImage(image_num):
+def drawImageOnly(image_num):
     print("current image number", image_num)
     # Get the image's rectangle
     image_rect = images[image_num].get_rect()
     image_rect.center = (screen_width // 2, screen_height // 2)
-      # Clear the screen
-    screen.fill((0, 0, 0))  # black background
-     # Draw the image
+    # Draw the image
     screen.blit(images[image_num], image_rect)
+   
+def drawImage(image_num):
+    clearScreen()
+    drawImageOnly(image_num)
     # Update the display
     pygame.display.flip()
+
+def drawTextOnly(text):
+    text_surface = font.render(text, False, (255,255, 255))
+    screen.blit(text_surface, dest=(0,0))
+
 
 mood = "normal"
 running = True
@@ -96,7 +107,10 @@ while running:
         pet = 0
         mood = "normal"
     elif mood == "sleepy":
-        drawImage(1)
+        clearScreen()
+        drawImageOnly(1)      #  blit, 
+        drawTextOnly("Hello") # just blits
+        pygame.display.flip()
         pygame.time.wait(1000)
         drawImage(5)
         pygame.time.wait(1000)
