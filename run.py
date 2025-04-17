@@ -54,14 +54,16 @@ def drawImage(image_num):
     pygame.display.flip()
 
 def drawTextOnly(text):
-    text_surface = font.render(text, False, (255,255, 255))
-    screen.blit(text_surface, dest=(0,0))
+    current_time = datetime.datetime.now().strftime("%H:%M:%S")
+    text_surface = font.render(f"The current time is {current_time}", True, (255,255,255))
+    screen.blit(text_surface, (0,0))
 
 
 mood = "normal"
 running = True
 pet = 0
 last_pet_time = datetime.datetime.now()
+
 
 while running:
     print("mood:", mood, "pet:", pet)
@@ -109,7 +111,8 @@ while running:
     elif mood == "sleepy":
         clearScreen()
         drawImageOnly(1)      #  blit, 
-        drawTextOnly("Hello") # just blits
+        drawTextOnly("") # just blits
+
         pygame.display.flip()
         pygame.time.wait(1000)
         drawImage(5)
