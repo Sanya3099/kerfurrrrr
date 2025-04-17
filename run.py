@@ -46,7 +46,7 @@ def drawImageOnly(image_num):
     image_rect.center = (screen_width // 2, screen_height // 2)
     # Draw the image
     screen.blit(images[image_num], image_rect)
-   
+
 def drawImage(image_num):
     clearScreen()
     drawImageOnly(image_num)
@@ -61,6 +61,14 @@ def drawTimeOnly():
     current_time = datetime.datetime.now().strftime("%H:%M:%S")
     drawTextOnly(current_time)
 
+    
+new_hour = int(input("Enter hour for alarm: "))
+new_minute = int(input("Enter minute for alarm: "))
+now = datetime.datetime.now()
+alarm_time = datetime.datetime.now().replace(hour=new_hour, minute=new_minute, second=0, microsecond=0)
+if alarm_time < now:
+    alarm_time += datetime.timedelta(days=1)
+    print(f"Alarm set for: {alarm_time.strftime('%H:%M:%S')}"
 
 mood = "normal"
 running = True
@@ -69,6 +77,13 @@ last_pet_time = datetime.datetime.now()
 alarm_time = datetime.datetime.now() + datetime.timedelta(minutes = 1 )
 
 while running:
+    #set alarm
+ 
+        drawTextOnly(alarm_time)
+    while now < alarm_time:
+        mood = "happy"
+
+    
    # print("mood:", mood, "pet:", pet)
     now = datetime.datetime.now()
     for event in pygame.event.get():
@@ -140,10 +155,8 @@ while running:
 
     else:
         raise Exception("Mood not recognized: " + mood)
-        
-    
+
+
 
 # Quit Pygame
 pygame.quit()
-
-
