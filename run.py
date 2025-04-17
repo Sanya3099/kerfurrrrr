@@ -54,20 +54,23 @@ def drawImage(image_num):
     pygame.display.flip()
 
 def drawTextOnly(text):
-    current_time = datetime.datetime.now().strftime("%H:%M:%S")
-    text_surface = font.render(f"The current time is {current_time}", True, (255,255,255))
+    text_surface = font.render(text, True, (255,255,255))
     screen.blit(text_surface, (0,0))
+
+def drawTimeOnly():
+    current_time = datetime.datetime.now().strftime("%H:%M:%S")
+    drawTextOnly(current_time)
 
 
 mood = "normal"
 running = True
 pet = 0
 last_pet_time = datetime.datetime.now()
-
+alarm_time = datetime.datetime.now() + datetime.timedelta(minutes = 1 )
 
 while running:
-    print("mood:", mood, "pet:", pet)
-   
+   # print("mood:", mood, "pet:", pet)
+    now = datetime.datetime.now()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -75,8 +78,8 @@ while running:
             if event.button == 1:
                mood = "happy"
                pet += 1
-               last_pet_time = datetime.datetime.now()
-    time_since_last_pet = (datetime.datetime.now() - last_pet_time).total_seconds()
+               last_pet_time = now
+    time_since_last_pet = (now - last_pet_time).total_seconds()
 
     if mood == "normal":
         drawImage(0)
@@ -111,7 +114,7 @@ while running:
     elif mood == "sleepy":
         clearScreen()
         drawImageOnly(1)      #  blit, 
-        drawTextOnly("") # just blits
+        drawTextOnly("I can't wait to meow with you again!") # just blits
 
         pygame.display.flip()
         pygame.time.wait(1000)
@@ -119,10 +122,22 @@ while running:
         pygame.time.wait(1000)
         mood = "sleeping"
     elif mood == "sleeping":
-        drawImage(6)
-        pygame.time.wait(300)
-        if pet >= 1:
+        if now > alarm_time:
+            mood = "alarmed"
+        elif pet >= 1:
             mood = "normal"
+        else:
+            clearScreen()
+            drawImageOnly(6)      #  blit, 
+            drawTimeOnly() # just blits
+            pygame.display.flip()
+            pygame.time.wait(300)
+    elif mood == "alarmed":
+        mood ="happy"
+        alarm_time += datetime.timedelta(days = 1 )
+        pet += 1
+        last_pet_time = now
+
     else:
         raise Exception("Mood not recognized: " + mood)
         
