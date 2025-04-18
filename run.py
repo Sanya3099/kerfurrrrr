@@ -61,28 +61,28 @@ def drawTimeOnly():
     current_time = datetime.datetime.now().strftime("%H:%M:%S")
     drawTextOnly(current_time)
 
-    
-new_hour = int(input("Enter hour for alarm: "))
-new_minute = int(input("Enter minute for alarm: "))
-now = datetime.datetime.now()
-alarm_time = datetime.datetime.now().replace(hour=new_hour, minute=new_minute, second=0, microsecond=0)
-if alarm_time < now:
-    alarm_time += datetime.timedelta(days=1)
-    print(f"Alarm set for: {alarm_time.strftime('%H:%M:%S')}"
+def setAlarm(new_hour, new_minute):
+    global alarm_time
+    now = datetime.datetime.now()
+    alarm_time = datetime.datetime.now().replace(hour=new_hour, minute=new_minute, second=0, microsecond=0)
+    if alarm_time < now:
+        alarm_time += datetime.timedelta(days=1)
+        print(f"Alarm set for: {alarm_time.strftime('%H:%M:%S')}")
+
+def setAlarmFromInput():
+    new_hour = int(input("Enter hour for alarm: "))
+    new_minute = int(input("Enter minute for alarm: "))
+    setAlarm(new_hour,new_minute)
+
 
 mood = "normal"
 running = True
 pet = 0
+
+setAlarmFromInput() # sets alarm_time
 last_pet_time = datetime.datetime.now()
-alarm_time = datetime.datetime.now() + datetime.timedelta(minutes = 1 )
 
 while running:
-    #set alarm
- 
-        drawTextOnly(alarm_time)
-    while now < alarm_time:
-        mood = "happy"
-
     
    # print("mood:", mood, "pet:", pet)
     now = datetime.datetime.now()
@@ -148,10 +148,12 @@ while running:
             pygame.display.flip()
             pygame.time.wait(300)
     elif mood == "alarmed":
-        mood ="happy"
         alarm_time += datetime.timedelta(days = 1 )
-        pet += 1
-        last_pet_time = now
+        clearScreen()
+        drawImageOnly(2)   #  blit, 
+        drawTimeOnly() # just blits
+        pygame.display.flip()
+        playSound(4)
 
     else:
         raise Exception("Mood not recognized: " + mood)
