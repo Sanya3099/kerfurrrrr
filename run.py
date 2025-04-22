@@ -4,6 +4,7 @@ import datetime
 pygame.init()
 
 font = pygame.font.Font(pygame.font.get_default_font(), 36)
+fontEyes = pygame.font.Font(pygame.font.get_default_font(), 140)
 
 screen_width = 800
 screen_height = 600
@@ -61,6 +62,20 @@ def drawTimeOnly():
     current_time = datetime.datetime.now().strftime("%H:%M:%S")
     drawTextOnly(current_time)
 
+def drawEyeText(text1, text2):
+    text_surface = fontEyes.render(text1, True, (255,255,255))
+    screen.blit(text_surface, text_surface.get_rect(center=(150,310)))
+    text_surface = fontEyes.render(text2, True, (255,255,255))
+    screen.blit(text_surface, text_surface.get_rect(center=(650,310)))
+
+
+def drawEyeTextOnly():
+    current_time = datetime.datetime.now()
+    hour = current_time.strftime("%H")
+    minute = current_time.strftime("%M")
+    drawEyeText(hour, minute)
+
+
 def setAlarm(new_hour, new_minute):
     global alarm_time
     now = datetime.datetime.now()
@@ -79,8 +94,11 @@ mood = "normal"
 running = True
 pet = 0
 
-setAlarmFromInput() # sets alarm_time
+setAlarm(1,0)
+mood = "showAlarm"
+#setAlarmFromInput() # sets alarm_time
 last_pet_time = datetime.datetime.now()
+last_mouse_button_down_time = None
 
 while running:
     
@@ -89,11 +107,20 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and mood != "showAlarm":
             if event.button == 1:
                mood = "happy"
                pet += 1
                last_pet_time = now
+               last_mouse_button_down_time = now
+        if event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1:
+                last_mouse_button_down_time = None
+                   
+    if last_mouse_button_down_time is not None:
+        if (now - last_mouse_button_down_time).total_seconds() > 3:
+            mood = "showAlarm"
+
     time_since_last_pet = (now - last_pet_time).total_seconds()
 
     if mood == "normal":
@@ -155,6 +182,16 @@ while running:
         pygame.display.flip()
         playSound(4)
 
+    elif mood == "showAlarm":
+        clearScreen()
+        drawImageOnly(0)
+        drawEyeTextOnly()
+        pygame.display.flip()
+
+
+
+
+        
     else:
         raise Exception("Mood not recognized: " + mood)
 
