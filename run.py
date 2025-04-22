@@ -89,19 +89,31 @@ def setAlarmFromInput():
     new_minute = int(input("Enter minute for alarm: "))
     setAlarm(new_hour,new_minute)
 
+def drawTimeSelection(hour, minute):
+    text_surface = fontEyes.render(hour, True, (255,255,255))
+    screen.blit(text_surface, text_surface.get_rect(center=(150,310)))
+    text_surface = fontEyes.render(minute, True, (255,255,255))
+    screen.blit(text_surface, text_surface.get_rect(center=(650,310)))
+
+
+
 
 mood = "normal"
 running = True
 pet = 0
 
-setAlarm(1,0)
+#setAlarm(1,0)
 mood = "showAlarm"
-#setAlarmFromInput() # sets alarm_time
+alarm_hour = 1
+alarm_minute = 0
+selected = "hour"
+
+setAlarmFromInput() # sets alarm_time
 last_pet_time = datetime.datetime.now()
 last_mouse_button_down_time = None
 
 while running:
-    
+
    # print("mood:", mood, "pet:", pet)
     now = datetime.datetime.now()
     for event in pygame.event.get():
@@ -116,7 +128,7 @@ while running:
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 last_mouse_button_down_time = None
-                   
+
     if last_mouse_button_down_time is not None:
         if (now - last_mouse_button_down_time).total_seconds() > 3:
             mood = "showAlarm"
@@ -185,13 +197,15 @@ while running:
     elif mood == "showAlarm":
         clearScreen()
         drawImageOnly(0)
-        drawEyeTextOnly()
+        seconds = pygame.time.get_ticks()
+        if (seconds // 500) % 2 == 0:
+            drawEyeTextOnly()
         pygame.display.flip()
 
 
 
 
-        
+
     else:
         raise Exception("Mood not recognized: " + mood)
 
@@ -199,3 +213,5 @@ while running:
 
 # Quit Pygame
 pygame.quit()
+
+
