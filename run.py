@@ -70,7 +70,7 @@ def drawEyeText(text1, text2):
 
 
 def drawEyeTextOnly():
-    drawEyeText(str(alarm_hour), str(alarm_minute))
+    drawEyeText(f'{alarm_hour:02}',f'{alarm_minute:02}')
 
 def setAlarm(new_hour, new_minute):
     """
@@ -86,19 +86,11 @@ def setAlarm(new_hour, new_minute):
         alarm_time += datetime.timedelta(days=1)
     print(f"Alarm set for: {alarm_time.strftime('%H:%M:%S')}")
 
-def setAlarmFromInput():
-    new_hour = int(input("Enter hour for alarm: "))
-    new_minute = int(input("Enter minute for alarm: "))
-    setAlarm(new_hour,new_minute)
-
 def drawTimeSelection(hour, minute):
     text_surface = fontEyes.render(hour, True, (255,255,255))
     screen.blit(text_surface, text_surface.get_rect(center=(150,310)))
     text_surface = fontEyes.render(minute, True, (255,255,255))
     screen.blit(text_surface, text_surface.get_rect(center=(650,310)))
-
-
-
 
 mood = "normal"
 running = True
@@ -110,14 +102,12 @@ alarm_hour = 1
 alarm_minute = 23
 selected = "hour"
 
-setAlarmFromInput() # sets alarm_time
+setAlarm(8,30)
 last_pet_time = datetime.datetime.now()
 last_mouse_button_down_time = None
 
 while running:
-
     mouse_touch_y = mouse_touch_x = None
-   # print("mood:", mood, "pet:", pet)
     now = datetime.datetime.now()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -203,31 +193,24 @@ while running:
     elif mood == "showAlarm":
         # See if the user is touching the eyes or nose
         if mouse_touch_x != None:
-            #print(mouse_touch_x, mouse_touch_y)
-            if mouse_touch_y >= 150 and mouse_touch_y >= 460:
+            print(mouse_touch_x, mouse_touch_y)
+            if mouse_touch_y >= 150:
                 if mouse_touch_x <= 316:
                     setAlarm((alarm_hour+1) % 24, alarm_minute)
                 elif mouse_touch_x >= 450:
-                    setAlarm(alarm_hour, (alarm_minute+1) % 60 )
-            elif mouse_touch_y >= 340:
-                if mouse_touch_x >320 and mouse_touch_x <490:
-                    mood = "wink"
-
+                    setAlarm(alarm_hour, (alarm_minute+10) % 60 )
+                elif mouse_touch_y >= 340:
+                    if mouse_touch_x >320 and mouse_touch_x <490:
+                        mood = "wink"
 
         clearScreen()
         drawImageOnly(0)
         seconds = pygame.time.get_ticks()
-        if (seconds // 500) % 2 == 0:
+        if (seconds // 300) % 2 == 0:
             drawEyeTextOnly()
         pygame.display.flip()
-
-
-
-
-
     else:
         raise Exception("Mood not recognized: " + mood)
-
 
 
 # Quit Pygame
