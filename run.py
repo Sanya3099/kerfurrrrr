@@ -41,7 +41,7 @@ def clearScreen():
     screen.fill((0, 0, 0))  # black background
 
 def drawImageOnly(image_num):
-    print("current image number", image_num)
+   # print("current image number", image_num)
     # Get the image's rectangle
     image_rect = images[image_num].get_rect()
     image_rect.center = (screen_width // 2, screen_height // 2)
@@ -70,19 +70,21 @@ def drawEyeText(text1, text2):
 
 
 def drawEyeTextOnly():
-    current_time = datetime.datetime.now()
-    hour = current_time.strftime("%H")
-    minute = current_time.strftime("%M")
-    drawEyeText(hour, minute)
-
+    drawEyeText(str(alarm_hour), str(alarm_minute))
 
 def setAlarm(new_hour, new_minute):
-    global alarm_time
+    """
+    takes in new hour and minute and sets the variables alarm_time, alarm_hour and alarm_minute.
+    """
+    global alarm_time, alarm_hour, alarm_minute
+    alarm_hour = new_hour
+    alarm_minute = new_minute
+
     now = datetime.datetime.now()
     alarm_time = datetime.datetime.now().replace(hour=new_hour, minute=new_minute, second=0, microsecond=0)
     if alarm_time < now:
         alarm_time += datetime.timedelta(days=1)
-        print(f"Alarm set for: {alarm_time.strftime('%H:%M:%S')}")
+    print(f"Alarm set for: {alarm_time.strftime('%H:%M:%S')}")
 
 def setAlarmFromInput():
     new_hour = int(input("Enter hour for alarm: "))
@@ -105,7 +107,7 @@ pet = 0
 #setAlarm(1,0)
 mood = "showAlarm"
 alarm_hour = 1
-alarm_minute = 0
+alarm_minute = 23
 selected = "hour"
 
 setAlarmFromInput() # sets alarm_time
@@ -114,17 +116,21 @@ last_mouse_button_down_time = None
 
 while running:
 
+    mouse_touch_y = mouse_touch_x = None
    # print("mood:", mood, "pet:", pet)
     now = datetime.datetime.now()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.MOUSEBUTTONDOWN and mood != "showAlarm":
+        if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-               mood = "happy"
-               pet += 1
-               last_pet_time = now
-               last_mouse_button_down_time = now
+                last_mouse_button_down_time = now
+                if  mood != "showAlarm":
+                    mood = "happy"
+                    pet += 1
+                    last_pet_time = now
+                else:
+                    mouse_touch_x, mouse_touch_y = event.pos
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 last_mouse_button_down_time = None
@@ -195,6 +201,19 @@ while running:
         playSound(4)
 
     elif mood == "showAlarm":
+        # See if the user is touching the eyes or nose
+        if mouse_touch_x != None:
+            #print(mouse_touch_x, mouse_touch_y)
+            if mouse_touch_y >= 150 and mouse_touch_y >= 460:
+                if mouse_touch_x <= 316:
+                    setAlarm((alarm_hour+1) % 24, alarm_minute)
+                elif mouse_touch_x >= 450:
+                    setAlarm(alarm_hour, (alarm_minute+1) % 60 )
+            elif mouse_touch_y >= 340:
+                if mouse_touch_x >320 and mouse_touch_x <490:
+                    mood = "wink"
+
+
         clearScreen()
         drawImageOnly(0)
         seconds = pygame.time.get_ticks()
