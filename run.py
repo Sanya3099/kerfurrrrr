@@ -3,89 +3,96 @@ import random
 import datetime
 pygame.init()
 
-def setupDisplay():
-    global font, fontEyes, screen_height, screen_width, screen
-    font = pygame.font.Font(pygame.font.get_default_font(), 36)
-    fontEyes = pygame.font.Font(pygame.font.get_default_font(), 140)
+class HeadGraphics:
+    def __init__(self):
+        self.font = pygame.font.Font(pygame.font.get_default_font(), 36)
+        self.fontEyes = pygame.font.Font(pygame.font.get_default_font(), 140)
 
-    screen_width = 800
-    screen_height = 600
-    screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption("kerfur")
+        self.screen_width = 800
+        self.screen_height = 600
+        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
+        pygame.display.set_caption("kerfur")
+        self._loadImageSound()
 
-def loadImageSound():
-    image_files = [
-        "kerfur-face1.webp",
-        "kerfur-face2.webp",
-        "kerfur-face3.webp",
-        "kerfur-face3b.webp",
-        "kerfur-face3c.webp",
-        "kerfur-sleep_a.webp",
-        "kerfur-sleep_b.webp",
-        "kerfur-wink-left_b.webp",
-        "kerfur-wink-right-b.webp",
-        "instructions.png"
-    ]
-    images = []
-    for filename in image_files:
-        images.append(pygame.image.load(filename))
+    def _loadImageSound(self):
+        image_files = [
+            "kerfur-face1.webp",
+            "kerfur-face2.webp",
+            "kerfur-face3.webp",
+            "kerfur-face3b.webp",
+            "kerfur-face3c.webp",
+            "kerfur-sleep_a.webp",
+            "kerfur-sleep_b.webp",
+            "kerfur-wink-left_b.webp",
+            "kerfur-wink-right-b.webp",
+            "instructions.png"
+        ]
+        self.images = []
+        for filename in image_files:
+            self.images.append(pygame.image.load(filename))
 
-    sound_files = [
-        'kerfur2meow-01.ogg',
-        'kerfur2meow-02.ogg',
-        'kerfur2meow-03.ogg',
-        'VotV-audio-effects-roomwell_on.ogg',
-        'kerfurEXE.ogg',
-    ]
+        sound_files = [
+            'kerfur2meow-01.ogg',
+            'kerfur2meow-02.ogg',
+            'kerfur2meow-03.ogg',
+            'VotV-audio-effects-roomwell_on.ogg',
+            'kerfurEXE.ogg',
+        ]
 
-    sounds = []
-    for soundname in sound_files:
-        sounds.append(pygame.sound.load(soundname))
-    return images, sounds
+        self.sounds = []
+        for soundname in sound_files:
+            self.sounds.append(pygame.sound.load(soundname))
 
-def playSound(sounds_num):
-    channel = sounds[sounds_num].play()
-    while channel.get_busy():
-        pygame.time.delay(100)
+    def _playSound(self, sounds_num):
+        channel = self.sounds[sounds_num].play()
+        while channel.get_busy():
+            pygame.time.delay(100)
 
-def playMeowSound():
-    playSound(random.randint(0,2))
+    def playMeowSound(self):
+        self._playSound(random.randint(0,2))
 
-def clearScreen():
-    # Clear the screen
-    screen.fill((0, 0, 0))  # black background
+    def clearScreen(self):
+        # Clear the screen
+        self.screen.fill((0, 0, 0))  # black background
 
-def drawImageOnly(image_num):
-   # print("current image number", image_num)
-    # Get the image's rectangle
-    image_rect = images[image_num].get_rect()
-    image_rect.center = (screen_width // 2, screen_height // 2)
-    # Draw the image
-    screen.blit(images[image_num], image_rect)
+    def _drawImageOnly(self,image_num):
+    # print("current image number", image_num)
+        # Get the image's rectangle
+        image_rect = self.images[image_num].get_rect()
+        image_rect.center = (self.screen_width // 2, self.screen_height // 2)
+        # Draw the image
+        self.screen.blit(images[image_num], image_rect)
 
-def drawImage(image_num):
-    clearScreen()
-    drawImageOnly(image_num)
-    # Update the display
-    pygame.display.flip()
+    def _drawImage(self, image_num):
+        self.clearScreen()
+        self._drawImageOnly(image_num)
+        # Update the display
+        pygame.display.flip()
 
-def drawTextOnly(text):
-    text_surface = font.render(text, True, (255,255,255))
-    screen.blit(text_surface, (0,0))
+    def drawTextOnly(self, text):
+        text_surface = self.font.render(text, True, (255,255,255))
+        self.screen.blit(text_surface, (0,0))
 
-def drawTimeOnly():
-    current_time = datetime.datetime.now().strftime("%H:%M")
-    drawTextOnly(current_time + " Alarm Time is " + alarm_time.strftime("%H:%M"))
+    def drawTimeOnly(self):
+        current_time = datetime.datetime.now().strftime("%H:%M")
+        self.drawTextOnly(current_time + " Alarm Time is " + alarm_time.strftime("%H:%M"))
 
-def drawEyeText(text1, text2):
-    text_surface = fontEyes.render(text1, True, (255,255,255))
-    screen.blit(text_surface, text_surface.get_rect(center=(150,310)))
-    text_surface = fontEyes.render(text2, True, (255,255,255))
-    screen.blit(text_surface, text_surface.get_rect(center=(650,310)))
+    def drawEyeText(self, text1, text2):
+        text_surface = self.fontEyes.render(text1, True, (255,255,255))
+        self.screen.blit(text_surface, text_surface.get_rect(center=(150,310)))
+        text_surface = self.fontEyes.render(text2, True, (255,255,255))
+        self.screen.blit(text_surface, text_surface.get_rect(center=(650,310)))
 
 
-def drawEyeTextOnly():
-    drawEyeText(f'{alarm_hour:02}',f'{alarm_minute:02}')
+    def drawEyeTextOnly(self):
+        self.drawEyeText(f'{alarm_hour:02}',f'{alarm_minute:02}')
+
+    def drawTimeSelection(self, hour, minute):
+        text_surface = self.fontEyes.render(hour, True, (255,255,255))
+        self.screen.blit(text_surface, text_surface.get_rect(center=(150,310)))
+        text_surface = self.fontEyes.render(minute, True, (255,255,255))
+        self.screen.blit(text_surface, text_surface.get_rect(center=(650,310)))
+
 
 def setAlarm(new_hour, new_minute):
     """
@@ -101,22 +108,14 @@ def setAlarm(new_hour, new_minute):
         alarm_time += datetime.timedelta(days=1)
     print(f"Alarm set for: {alarm_time.strftime('%H:%M:%S')}")
 
-def drawTimeSelection(hour, minute):
-    text_surface = fontEyes.render(hour, True, (255,255,255))
-    screen.blit(text_surface, text_surface.get_rect(center=(150,310)))
-    text_surface = fontEyes.render(minute, True, (255,255,255))
-    screen.blit(text_surface, text_surface.get_rect(center=(650,310)))
 
 def run():
+    headGraphics = HeadGraphics()
     mood = "instructions"
     running = True
     pet = 0
-
-    #setAlarm(1,0)
-    #mood = "showAlarm"
     alarm_hour = 1
     alarm_minute = 23
-    selected = "hour"
 
     setAlarm(8,30)
     last_pet_time = datetime.datetime.now()
@@ -148,11 +147,11 @@ def run():
         time_since_last_pet = (now - last_pet_time).total_seconds()
         
         if mood == "instructions":
-            drawImage(9)
+            headGraphics._drawImage(9)
             if pet >= 1:
                 mood = "normal"
         elif mood == "normal":
-            drawImage(0)
+            headGraphics._drawImage(0)
             random_number = random.randint(0,100)
             if random_number == 0:
                 mood = "happy"
@@ -164,31 +163,31 @@ def run():
                 mood = "sleepy"
                 pet = 0
         elif mood == "blinking":
-            drawImage(1)
+            headGraphics._drawImage(1)
             mood = "normal"
             pygame.time.wait(300)
         elif mood == "happy":
-            drawImage(2)
-            playMeowSound()
+            headGraphics._drawImage(2)
+            headGraphics.playMeowSound()
             mood = "normal"
             if pet > 5:
                 mood = "wink"
         elif mood == "wink":
-            drawImage(7)
-            playSound(3)
+            headGraphics._drawImage(7)
+            headGraphics._playSound(3)
             pygame.time.wait(100)
-            drawImage(8)
+            headGraphics._drawImage(8)
             pygame.time.wait(300)
             pet = 0
             mood = "normal"
         elif mood == "sleepy":
-            clearScreen()
-            drawImageOnly(1)      #  blit, 
-            drawTextOnly("I can't wait to meow with you again!") # just blits
+            headGraphics.clearScreen()
+            headGraphics._drawImageOnly(1)      #  blit, 
+            headGraphics.drawTextOnly("I can't wait to meow with you again!") # just blits
 
             pygame.display.flip()
             pygame.time.wait(1000)
-            drawImage(5)
+            headGraphics._drawImage(5)
             pygame.time.wait(1000)
             mood = "sleeping"
         elif mood == "sleeping":
@@ -197,18 +196,18 @@ def run():
             elif pet >= 1:
                 mood = "normal"
             else:
-                clearScreen()
-                drawImageOnly(6)      #  blit, 
-                drawTimeOnly() # just blits
+                headGraphics.clearScreen()
+                headGraphics._drawImageOnly(6)      #  blit, 
+                headGraphics.drawTimeOnly() # just blits
                 pygame.display.flip()
                 pygame.time.wait(300)
         elif mood == "alarmed":
             alarm_time += datetime.timedelta(days = 1 )
-            clearScreen()
-            drawImageOnly(2)   #  blit, 
-            drawTimeOnly() # just blits
+            headGraphics.clearScreen()
+            headGraphics._drawImageOnly(2)   #  blit, 
+            headGraphics.drawTimeOnly() # just blits
             pygame.display.flip()
-            playSound(4)
+            headGraphics._playSound(4)
 
         elif mood == "showAlarm":
             # See if the user is touching the eyes or nose
@@ -223,20 +222,16 @@ def run():
                         if mouse_touch_x >320 and mouse_touch_x <490:
                             mood = "wink"
 
-            clearScreen()
-            drawImageOnly(0)
+            headGraphics.clearScreen()
+            headGraphics.drawImageOnly(0)
             seconds = pygame.time.get_ticks()
             if (seconds // 300) % 2 == 0:
-                drawEyeTextOnly()
+                headGraphics.drawEyeTextOnly()
             pygame.display.flip()
         else:
             raise Exception("Mood not recognized: " + mood)
 
 
-setupDisplay()
-images, sounds = loadImageSound()
 run()
 # Quit Pygame
 pygame.quit()
-
-
