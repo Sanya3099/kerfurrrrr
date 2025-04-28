@@ -41,7 +41,7 @@ class HeadGraphics:
 
         self.sounds = []
         for soundname in sound_files:
-            self.sounds.append(pygame.sound.load(soundname))
+            self.sounds.append(pygame.mixer.Sound(soundname))
 
     def _playSound(self, sounds_num):
         channel = self.sounds[sounds_num].play()
@@ -61,13 +61,33 @@ class HeadGraphics:
         image_rect = self.images[image_num].get_rect()
         image_rect.center = (self.screen_width // 2, self.screen_height // 2)
         # Draw the image
-        self.screen.blit(images[image_num], image_rect)
+        self.screen.blit(self.images[image_num], image_rect)
 
     def _drawImage(self, image_num):
         self.clearScreen()
         self._drawImageOnly(image_num)
         # Update the display
         pygame.display.flip()
+    
+    def drawImageNormalFace(self):
+        self._drawImage(0)
+    def drawImageNormalFaceOnly(self):
+        self._drawImageOnly(0)
+    def drawImageBlinkFace(self):
+        self._drawImage(1)
+    def drawImageHappyFace(self):
+        self._drawImage(random.randint(2,4))
+    def drawImageSleepyFace(self):
+        self._drawImage(5)
+    def drawImageSleepFaceOnly(self):
+        self._drawImageOnly(6)
+    def drawImageWinkLeft(self):
+        self._drawImage(7)
+    def drawImageWiinkRight(self):
+        self._drawImage(8)
+    def drawImageInstructions(self):
+        self._drawImage(9)
+
 
     def drawTextOnly(self, text):
         text_surface = self.font.render(text, True, (255,255,255))
@@ -94,6 +114,9 @@ class HeadGraphics:
         self.screen.blit(text_surface, text_surface.get_rect(center=(650,310)))
 
 
+alarm_hour = 8
+alarm_minute = 0
+
 def setAlarm(new_hour, new_minute):
     """
     takes in new hour and minute and sets the variables alarm_time, alarm_hour and alarm_minute.
@@ -110,12 +133,11 @@ def setAlarm(new_hour, new_minute):
 
 
 def run():
+    global alarm_time, alarm_hour, alarm_minute
     headGraphics = HeadGraphics()
     mood = "instructions"
     running = True
     pet = 0
-    alarm_hour = 1
-    alarm_minute = 23
 
     setAlarm(8,30)
     last_pet_time = datetime.datetime.now()
@@ -147,11 +169,11 @@ def run():
         time_since_last_pet = (now - last_pet_time).total_seconds()
         
         if mood == "instructions":
-            headGraphics._drawImage(9)
+            headGraphics.drawImageInstructions()
             if pet >= 1:
                 mood = "normal"
         elif mood == "normal":
-            headGraphics._drawImage(0)
+            headGraphics.drawImageNormalFace()
             random_number = random.randint(0,100)
             if random_number == 0:
                 mood = "happy"
@@ -163,20 +185,20 @@ def run():
                 mood = "sleepy"
                 pet = 0
         elif mood == "blinking":
-            headGraphics._drawImage(1)
+            headGraphics.drawImageBlinkFace()
             mood = "normal"
             pygame.time.wait(300)
         elif mood == "happy":
-            headGraphics._drawImage(2)
+            headGraphics.drawImageHappyFace()
             headGraphics.playMeowSound()
             mood = "normal"
             if pet > 5:
                 mood = "wink"
         elif mood == "wink":
-            headGraphics._drawImage(7)
+            headGraphics.drawImageWinkLeft()
             headGraphics._playSound(3)
             pygame.time.wait(100)
-            headGraphics._drawImage(8)
+            headGraphics.drawImageWiinkRight()
             pygame.time.wait(300)
             pet = 0
             mood = "normal"
@@ -187,7 +209,7 @@ def run():
 
             pygame.display.flip()
             pygame.time.wait(1000)
-            headGraphics._drawImage(5)
+            headGraphics.drawImageSleepyFace()
             pygame.time.wait(1000)
             mood = "sleeping"
         elif mood == "sleeping":
@@ -197,7 +219,7 @@ def run():
                 mood = "normal"
             else:
                 headGraphics.clearScreen()
-                headGraphics._drawImageOnly(6)      #  blit, 
+                headGraphics.drawImageSleepFaceOnly()     #  blit, 
                 headGraphics.drawTimeOnly() # just blits
                 pygame.display.flip()
                 pygame.time.wait(300)
@@ -217,13 +239,13 @@ def run():
                     if mouse_touch_x <= 316:
                         setAlarm((alarm_hour+1) % 24, alarm_minute)
                     elif mouse_touch_x >= 450:
-                        setAlarm(alarm_hour, (alarm_minute+10) % 60 )
+                        setAlarm(alarm_hour, (alarm_minute+5) % 60 )
                     elif mouse_touch_y >= 340:
                         if mouse_touch_x >320 and mouse_touch_x <490:
                             mood = "wink"
 
             headGraphics.clearScreen()
-            headGraphics.drawImageOnly(0)
+            headGraphics.drawImageNormalFaceOnly()
             seconds = pygame.time.get_ticks()
             if (seconds // 300) % 2 == 0:
                 headGraphics.drawEyeTextOnly()
