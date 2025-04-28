@@ -14,24 +14,33 @@ def setupDisplay():
     pygame.display.set_caption("kerfur")
 
 def loadImageSound():
+    image_files = [
+        "kerfur-face1.webp",
+        "kerfur-face2.webp",
+        "kerfur-face3.webp",
+        "kerfur-face3b.webp",
+        "kerfur-face3c.webp",
+        "kerfur-sleep_a.webp",
+        "kerfur-sleep_b.webp",
+        "kerfur-wink-left_b.webp",
+        "kerfur-wink-right-b.webp",
+        "instructions.png"
+    ]
     images = []
-    images.append(pygame.image.load("kerfur-face1.webp"))
-    images.append(pygame.image.load("kerfur-face2.webp"))
-    images.append(pygame.image.load("kerfur-face3.webp"))
-    images.append(pygame.image.load("kerfur-face3b.webp"))
-    images.append(pygame.image.load("kerfur-face3c.webp"))
-    images.append(pygame.image.load("kerfur-sleep_a.webp"))
-    images.append(pygame.image.load("kerfur-sleep_b.webp"))
-    images.append(pygame.image.load("kerfur-wink-left_b.webp"))
-    images.append(pygame.image.load("kerfur-wink-right-b.webp"))
-    images.append(pygame.image.load("instructions.png"))
+    for filename in image_files:
+        images.append(pygame.image.load(filename))
+
+    sound_files = [
+        'kerfur2meow-01.ogg',
+        'kerfur2meow-02.ogg',
+        'kerfur2meow-03.ogg',
+        'VotV-audio-effects-roomwell_on.ogg',
+        'kerfurEXE.ogg',
+    ]
 
     sounds = []
-    sounds.append(pygame.mixer.Sound('kerfur2meow-01.ogg'))
-    sounds.append(pygame.mixer.Sound('kerfur2meow-02.ogg'))
-    sounds.append(pygame.mixer.Sound('kerfur2meow-03.ogg'))
-    sounds.append(pygame.mixer.Sound('VotV-audio-effects-roomwell_on.ogg'))
-    sounds.append(pygame.mixer.Sound('kerfurEXE.ogg'))
+    for soundname in sound_files:
+        sounds.append(pygame.sound.load(soundname))
     return images, sounds
 
 def playSound(sounds_num):
